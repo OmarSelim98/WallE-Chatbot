@@ -1,0 +1,138 @@
+! version = 2.0
+
+> begin
+	+ request
+   * <get met> == undefined => <set met=true>{topic=welcome}{ok}
+	- {ok}
+< begin
+
+// Bot Variables
+! var name     = Wall-E
+! var age      = 700
+! var gender   = androgynous
+! var location = Earth
+! var phone    = 555-1234
+
+// Greetings
+
+> topic welcome
++ (hello|hi|hey)
+- Hey there!
+- Hello!
+- Hi!
+
++ *
+-Hello, I'm <bot name>. Would you like a movie recommendation?
+^<button (onclick)="getNameBtn('trending')" class="btn chat-btn" >Trending Movies for the day</button><br> 
+^<button (onclick)="getNameBtn('genre')" class="btn chat-btn">By Genre</button><br> 
+^<button (onclick)="getNameBtn('search')" class="btn chat-btn" >Similar Movies to..</button><br>{topic=start}
+
+
+// Bot Name
++ what is your name
+- You can call me <bot name>.
+
++ do you have a name
+@ what is your name
+
++ what can i call you
+@ what is your name
+
++ who are you
+@ what is your name
+
++ my name is *
+- <set name=<formal>>Nice to meet you, <formal>.
+- <set name=<formal>>Hi, <formal>, my name is <bot name>.
+- <set name=<formal>><formal>, nice to meet you.
+< topic
+
+> topic start
++ trending
+- <call>getTrending </call> |||
+^<button (onclick)="getNameBtn('another')" class="btn chat-btn">Let me choose another category</button><br>
+^<button (onclick)="getNameBtn('finish')" class="btn chat-btn">Let us grab our popcorn and watch !</button><br>
+
++ genre
+- Choose the genre you would like. <call>getGenres </call>{topic=genre}
+
++ search
+- send me the name of the movie you'd like to get similar movies to 😁 {topic=search}
+
++ another
+-<button (onclick)="getNameBtn('trending')" class="btn chat-btn" >Trending Movies for the day</button><br> 
+^<button (onclick)="getNameBtn('genre')" class="btn chat-btn">By Genre</button><br> 
+^<button (onclick)="getNameBtn('search')" class="btn chat-btn" >Similar Movies to..</button><br>{topic=start}
+
++finish
+-Was great talking to you 😄.{topic=finish}
+
++ *
+- Please pick a valid type.
+< topic
+
+> topic genre
++ #
+- <call>getByGenre <star> </call> |||
+^<button (onclick)="getNameBtn('more')" class="btn chat-btn">I did not like those movies, can you show me more movies please?</button><br>
+^<button (onclick)="getNameBtn('finish')" class="btn chat-btn">Let us grab our popcorn and watch !</button><br>
+
++ more
+- Choose the genre you would like. <call>getGenres </call>{topic=genre}
+
++finish
+-Was great talking to you 😄.{topic=finish}
+< topic
+
+> topic search
++ *
+-<call>searchFor <star></call>{topic=similar}
+< topic
+
+> topic similar
++ #
+-<call>getSimilar <star></call> |||
+^<button (onclick)="getNameBtn('finish')" class="btn chat-btn">Let us grab our popcorn and watch !</button><br>
+
++finish
+-Was great talking to you 😄.{topic=finish}
+< topic
+
+> topic finish
++ *
+- Wanna start again?🧐
+- would you like to start again?🤔
++(yes|ok)
+-Let's Go!{topic=welcome}
+-Roger That!{topic=welcome}
+
++no
+- OK 🤷🏻‍♂️
+- it's ok 😐
+< topic
+
+> object getTrending python
+    from utilities import getTrending
+    return getTrending()
+< object
+
+> object getGenres python
+    from utilities import getGenres
+    return getGenres()
+< object
+
+> object getByGenre python
+    from utilities import getByGenre
+    return getByGenre(args)
+< object
+
+> object searchFor python
+    from utilities import searchFor
+    return searchFor(args)
+< object
+
+> object getSimilar python
+    from utilities import getSimilar
+    return getSimilar(args)
+< object
+

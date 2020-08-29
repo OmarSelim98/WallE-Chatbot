@@ -19,7 +19,7 @@ export class MessageFormComponent implements OnInit {
 
   finalTranscript = '';
   recognizing = false;
-  currentLanguage: string='ar-EG';
+  currentLanguage: string='en-UK';
   startChat:boolean = false
   testb:boolean = false;
   testtxt;
